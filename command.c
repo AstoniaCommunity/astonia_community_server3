@@ -2621,6 +2621,17 @@ int command(int cn,char *ptr) {   // 1=ok, 0=repeat
 
         return 1;
     }
+	
+	if	((len=cmdcmp(ptr,"undeath",7)) && (ch[cn].flags&(CF_GOD))) { 
+        if (ch[cn].exp>=ch[cn].exp_death) log_char(cn,LOG_SYSTEM,0,"No experience to be restored.");
+		else {
+			log_char(cn,LOG_SYSTEM,0,"Before: %d exp. After: %d exp. Restored: %d exp.",ch[cn].exp,ch[cn].exp_death,ch[cn].exp_death-ch[cn].exp);
+			ch[cn].exp=ch[cn].exp_death;
+			ch[cn].exp_death=0;
+		}
+			
+        return 1;
+    }
 
     if (cmd_chat(cn,ptr)) return 1;
 
