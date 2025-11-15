@@ -412,7 +412,6 @@ struct character
         unsigned int exp;
 	unsigned int exp_used;
         unsigned int level;
-		unsigned int exp_death; // For storing pre-death exp amount.
 	
 	// posessions
         unsigned int gold;

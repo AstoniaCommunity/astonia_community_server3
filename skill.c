@@ -253,7 +253,6 @@ int raise_value_exp(int cn,int v) {
 
     cost=raise_cost(v,ch[cn].value[1][v],seyan);
 
-	if (ch[cn].exp_death) ch[cn].exp_death+=cost; // Account for alternative means to increase stats to ensure that they aren't wasted exp
     ch[cn].exp_used+=cost;
     ch[cn].exp+=cost;
     check_levelup(cn);
