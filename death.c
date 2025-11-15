@@ -461,7 +461,11 @@ int die_char(int cn,int co,int ispk) {
 
             if (loss) log_char(cn,LOG_SYSTEM,0,"Thou died and lost some experience points.");
             else log_char(cn,LOG_SYSTEM,0,"Thou died, but since thou art still a Newbie, thou did not lose any experience points.");
-
+			
+			if (ch[cn].exp_death<ch[cn].exp) ch[cn].exp_death=ch[cn].exp; //Save pre-death exp only if current exp is higher than the pre-death exp value.
+			
+			if (loss && (ch[cn].flags&CF_GOD)) log_char(cn,LOG_SYSTEM,0,"Death exp: %d. Lost exp: %d. Current exp: %d.",ch[cn].exp_death,loss,ch[cn].exp-loss);
+			
             ch[cn].exp-=loss;
 
             dlog(cn,0,"died and lost %d exp",loss);

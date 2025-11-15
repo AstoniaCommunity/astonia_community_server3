@@ -1465,6 +1465,8 @@ void shrine_vitality(int in,int cn,int nr,int level,struct shrine_ppd *ppd) {
     give_exp(cn,cost);
     update_char(cn);
 
+	if (ch[cn].exp_death) ch[cn].exp_death+=cost; // Account for alternative means to increase stats to ensure that they aren't wasted exp
+
     shrine_set(nr,ppd);
     sendquestlog(cn,ch[cn].player);
 }
