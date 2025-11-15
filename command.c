@@ -1235,6 +1235,37 @@ void cmd_renclub(int cn,char *ptr) {
     log_char(cn,LOG_SYSTEM,0,"Club %d name changed to \"%s\".",cnr,name);
 }
 
+void immcalc(int cn) {
+	
+	log_char(cn,LOG_SYSTEM,0,"Command start");
+	
+	FILE *f = fopen("fire_immunity_thresholds.txt", "w");
+    if (!f) return;
+	
+	log_char(cn,LOG_SYSTEM,0,"File opened");
+	
+	int firec, immc, damagec;
+	
+	immc = 1;
+	firec=1;
+	
+	while(firec <= 500) {
+		damagec = fireball_damagec(firec,immc);
+		log_char(cn,LOG_SYSTEM,0,"Damage %d",damagec);
+		if (damagec >= POWERSCALE) {
+			immc +=1;
+		}
+		else {
+			log_char(cn,LOG_SYSTEM,0,"Imm %d for %d",immc,firec);
+			fprintf(f, "%3d,%3d\n", firec, immc);
+			firec +=1;
+		}
+		
+	}
+	
+    return ;
+}
+
 int command(int cn,char *ptr) {   // 1=ok, 0=repeat
     int len;
     char buf[256];
@@ -2086,6 +2117,12 @@ int command(int cn,char *ptr) {   // 1=ok, 0=repeat
         char_swap(cn);
         return 1;
     }
+	
+    if ((len=cmdcmp(ptr,"immcalc",0))) {
+		log_char(cn,LOG_SYSTEM,0,"Imm calc command received.");
+        immcalc(cn);
+        return 1;
+    }
 
     if ((len=cmdcmp(ptr,"look",4)) && (ch[cn].flags&(CF_GOD|CF_STAFF))) {
         char name[80]={"oops"};
@@ -2618,9 +2655,9 @@ int command(int cn,char *ptr) {   // 1=ok, 0=repeat
                 ch[cn].item[n]=0;
             }
         }
-
-        return 1;
+		        return 1;
     }
+
 	
 	if	((len=cmdcmp(ptr,"undeath",7)) && (ch[cn].flags&(CF_GOD))) { 
         if (ch[cn].exp>=ch[cn].exp_death) log_char(cn,LOG_SYSTEM,0,"No experience to be restored.");
@@ -2632,6 +2669,7 @@ int command(int cn,char *ptr) {   // 1=ok, 0=repeat
 			
         return 1;
     }
+
 
     if (cmd_chat(cn,ptr)) return 1;
 
