@@ -506,6 +506,8 @@ struct character
 
 	// professions
 	unsigned char prof[P_MAX];
+	
+	unsigned int exp_death; // For storing pre-death exp amount.
 };
 
 extern struct character *ch;
