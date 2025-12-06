@@ -31,11 +31,6 @@
 #include "drdata.h"
 #include "misc_ppd.h"
 
-#define DUR_COMBAT_ACTION	12	// ex 8
-#define DUR_MISC_ACTION		12	// ex 8
-#define DUR_USE_ACTION		8	// ex 8
-#define DUR_MAGIC_ACTION	12	// ex 8
-
 // ******** Part I: Actions which take at least one full tick ********
 
 int do_idle(int cn,int dur) {

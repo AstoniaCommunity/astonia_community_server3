@@ -42,3 +42,8 @@ int equip_item(int cn,int in,int pos);
 int do_earthmud(int cn,int x,int y,int strength);
 int do_earthrain(int cn,int x,int y,int strength);
 int do_pulse(int cn);
+
+#define DUR_COMBAT_ACTION	12	// ex 8
+#define DUR_MISC_ACTION		12	// ex 8
+#define DUR_USE_ACTION		8	// ex 8
+#define DUR_MAGIC_ACTION	12	// ex 8

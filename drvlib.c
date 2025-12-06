@@ -1085,8 +1085,8 @@ static int check_pulse_field(int cn,int x,int y) {
     if (!can_attack(cn,co)) return 0;
     if (!char_see_char(cn,co)) return 0;
 
-    // dont fire if enemy has enough mana to re-fill hp or ms
-    if (ch[co].mana>POWERSCALE*4 && (ch[co].value[1][V_MAGICSHIELD] || ch[co].value[1][V_HEAL])) return 0;
+    // dont fire if enemy has enough mana to re-fill hp or ms and the enemies magic cast time is equal to of slower than the players.
+    if ((ch[co].mana>POWERSCALE*4 && (ch[co].value[1][V_MAGICSHIELD] || ch[co].value[1][V_HEAL])) && (speed(ch[cn].value[0][V_SPEED],ch[cn].speed_mode,DUR_MAGIC_ACTION) > speed(ch[co].value[0][V_SPEED],ch[co].speed_mode,DUR_MAGIC_ACTION))) return 0;
     // dont fire if enemy is casting heal or ms
     if (ch[co].action==AC_HEAL_SELF || ch[co].action==AC_MAGICSHIELD) return 0;
 
