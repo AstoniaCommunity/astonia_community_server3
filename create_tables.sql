@@ -370,7 +370,7 @@ CREATE TABLE subscriber (
   country char(80) default NULL,
   birthdate int(11) default NULL,
   gender enum('M','F') default NULL,
-  password char(16) default NULL,
+  password char(255) default NULL,
   credit_nr char(32) default NULL,
   credit_date char(16) default NULL,
   credit_type char(1) default NULL,

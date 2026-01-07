@@ -117,6 +117,6 @@ INSERT INTO constants VALUES ('unique',93138);
 --
 -- WHERE:  ID=1
 
-
-INSERT INTO subscriber VALUES (1,'joker@astonia.com','Daniel','Brockhaus','Molkereistr. 19','28870 Fischerhude','','Germany',120610800,'M','rene754','','','','Daniel D  Brockhaus',0,1238540400,1006854374,'N','N','Y',1093886618,'Y',1,'test','F070108');
+-- password translates to the usual "rene754". Just saying.
+INSERT INTO subscriber VALUES (1,'joker@astonia.com','Daniel','Brockhaus','Molkereistr. 19','28870 Fischerhude','','Germany',120610800,'M','$argon2id$v=19$m=19456,t=2,p=1$BLYf2C807GVG/7IoJNu9GA$0jdwk1SCvab0A2kTs467fTJV3iZ5sIJo6b6H8q3a2oM','','','','Daniel D  Brockhaus',0,1238540400,1006854374,'N','N','Y',1093886618,'Y',1,'test','F070108');
 

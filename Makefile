@@ -47,16 +47,19 @@ OBJS=.obj/server.o .obj/io.o .obj/libload.o .obj/tool.o .obj/sleep.o \
 .obj/prof.o .obj/motd.o .obj/ignore.o .obj/tell.o .obj/clanlog.o \
 .obj/respawn.o .obj/poison.o .obj/swear.o .obj/lab.o \
 .obj/consistency.o .obj/btrace.o .obj/club.o .obj/teufel_pk.o \
-.obj/questlog.o .obj/badip.o
+.obj/questlog.o .obj/badip.o .obj/argon.o
 
 
 # ------- Server -----
 
 server:	$(OBJS)
-	$(CC) $(LDRFLAGS) -o server $(OBJS) -lmysqlclient -lm -lz -ldl -lpthread
+	$(CC) $(LDRFLAGS) -o server $(OBJS) -lmysqlclient -lm -lz -ldl -lpthread -largon2
 
 .obj/server.o:		server.c server.h client.h player.h io.h notify.h libload.h tool.h sleep.h log.h create.h direction.h act.h los.h path.h timer.h effect.h database.h map.h date.h container.h store.h mem.h sector.h chat.h
 	$(CC) $(CFLAGS) -o .obj/server.o -c server.c
+
+.obj/argon.o:		argon.c argon.h
+	$(CC) $(CFLAGS) -o .obj/argon.o -c argon.c
 
 .obj/io.o:		io.c server.h client.h player.h log.h mem.h io.h
 	$(CC) $(CFLAGS) -o $*.o -c $<
@@ -673,8 +676,8 @@ chatserver:		.obj/chatserver.o
 .obj/chatserver.o:	chatserver.c
 	$(CC) $(CFLAGS) -o .obj/chatserver.o -c chatserver.c
 
-create_account:		create_account.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o create_account create_account.c -lmysqlclient
+create_account:		create_account.c .obj/argon.o argon.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o create_account create_account.c .obj/argon.o -lmysqlclient -largon2
 
 create_character:	create_character.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o create_character create_character.c -lmysqlclient

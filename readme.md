@@ -7,7 +7,7 @@ git clone https://github.com/DanielBrockhaus/astonia_server.git
 sudo apt-get install gcc-multilib
 sudo dpkg --add-architecture i386
 sudo apt install make
-sudo apt install lib32z-dev
+sudo apt install lib32z-dev libargon2-dev:i386
 sudo apt install libmysqlclient-dev:i386
 sudo apt install mariadb-server
 cat MYSQLPASSWD
@@ -21,4 +21,3 @@ echo "Welcome to Astonia" >motd.txt
 rm MYSQLPASSWD
 # the "my" script is very handy, but also a security risk!
 ```
-

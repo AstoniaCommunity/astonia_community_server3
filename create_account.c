@@ -28,6 +28,7 @@
 #include "club.h"
 #include "bank.h"
 #include "badip.h"
+#include "argon.h"
 
 static MYSQL mysql;
 static char mysqlpass[80];
@@ -76,7 +77,8 @@ void exit_database(void) {
 }
 
 int main(int argc, char **args) {
-    char buf[256];
+    char buf[512];
+    char hash[256];
 
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <email> <password>\n", args[0]);
@@ -88,6 +90,11 @@ int main(int argc, char **args) {
         return 3;
     }
 
+    if (argon2id_hash_password(hash, sizeof(hash), args[2], NULL)) {
+        fprintf(stderr, "Argon failed. Call Dad!\n");
+        return 2;
+    }
+
     sprintf(buf, "insert subscriber (email,password,creation_time,locked,banned,vendor) values ("
                  "'%s'," // email
                  "'%s'," // password
@@ -95,7 +102,7 @@ int main(int argc, char **args) {
                  "'N'," // locked
                  "'I'," // banned
                  "%d)", // vendor
-            args[1], args[2], (int)time(NULL), 0);
+            args[1], hash, (int)time(NULL), 0);
 
     if (mysql_query(&mysql, buf)) {
         fprintf(stderr, "Failed to create subscriber: Error: %s (%d)", mysql_error(&mysql), mysql_errno(&mysql));

@@ -62,6 +62,7 @@
 #include "date.h"
 #include "club.h"
 #include "badip.h"
+#include "argon.h"
 
 #define DT_QUERY 1
 #define DT_LOAD 2
@@ -2053,7 +2054,7 @@ static int load_char_pwd(char *pass, int sID, int *ppaid_till, int *ppaid, int v
         return 1;
     }
 
-    if (strcmp(pass, row[0])) {
+    if (argon2id_verify_password(row[0], pass, NULL) != 1) {
         mysql_free_result_cnt(result);
         return 1;
     }
