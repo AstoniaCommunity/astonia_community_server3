@@ -1,3 +1,14 @@
+# Astonia 3 Server, Community Editon
+
+## Warning
+Do not deploy on an existing database! At the very least the hashed password
+will prevent anyone from logging in and there might be more changes to the
+table structure eventually.
+
+## Building
+
+### Ubuntu
+
 To run under Ubuntu 22.04.4 LTS (tested and working as of 2024.06.27)
 
 ```
