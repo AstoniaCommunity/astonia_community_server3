@@ -748,7 +748,7 @@ static void cl_raise(int nr, char *buf) {
 
     n = *(unsigned short *)(buf);
 
-    if (n < 0 || n > V_MAX) return;
+    if (n < 0 || n >= V_MAX) return;
 
     cn = player[nr]->cn;
 

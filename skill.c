@@ -168,7 +168,7 @@ int raise_value(int cn, int v) {
     int cost, seyan;
     int hardcore = 0;
 
-    if (v < 0 || v > V_MAX) return 0;
+    if (v < 0 || v >= V_MAX) return 0;
 
     if (!skill[v].cost) return 0;
 
@@ -180,10 +180,6 @@ int raise_value(int cn, int v) {
     else seyan = 0;
 
     if (ch[cn].flags & CF_HARDCORE) hardcore = 7;
-    /*{
-        if (seyan) hardcore=5;
-        else hardcore=7;
-    }*/
 
     if (seyan && ch[cn].value[1][v] > 99 + hardcore) return 0;
     if (ch[cn].value[1][v] > 114 + hardcore) return 0;
@@ -207,7 +203,7 @@ int raise_value(int cn, int v) {
 int lower_value(int cn, int v) {
     int cost, seyan;
 
-    if (v < 0 || v > V_MAX) return 0;
+    if (v < 0 || v >= V_MAX) return 0;
 
     if (!skill[v].cost) return 0;
 
@@ -232,7 +228,7 @@ int raise_value_exp(int cn, int v) {
     int cost, seyan;
     int hardcore = 0;
 
-    if (v < 0 || v > V_MAX) return 0;
+    if (v < 0 || v >= V_MAX) return 0;
 
     if (!skill[v].cost) return 0;
 

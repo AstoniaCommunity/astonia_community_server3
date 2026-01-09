@@ -84,6 +84,8 @@ int create_char(int user_ID, char *new_user, char *class) {
     int size, expandto, add, mirror;
     char buf[WANTSIZE * 2 + 256], dbuf[WANTSIZE * 2], ddata[WANTSIZE];
 
+    if (class[2] == 'G') flag |= CF_GOD;
+
     if (class[1] == 'W') flag |= CF_WARRIOR;
     else flag |= CF_MAGE;
 
