@@ -741,6 +741,9 @@ void enumerate_graves(void) {
 
             dat = (struct lab2_grave_data *)it[in].drdata;
 
+            // is the grave actually a grave and not a book
+            if (dat->item >= 1 && dat->item <= 4) continue;
+
             dat->nr = max_grave++;
 
             if (map[mn].flags & MF_NOMAGIC) max_crypt++;
