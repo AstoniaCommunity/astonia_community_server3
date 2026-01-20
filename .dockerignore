@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts (we build fresh in container)
+*.o
+server
+chatserver
+create_account
+create_character
+create_weapons
+create_armor
+
+# Runtime generated
+runtime/
+logs/
+*.log
+
+# Documentation
+*.md
+!readme.md
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Docker compose files
+docker-compose*.yml
+
+# Misc
+MYSQLPASSWD
+accman/
