@@ -366,6 +366,32 @@ void zero_relation(int nr) {
     }
 }
 
+// Disband a clan, leaving the slot genuinely empty and safe to reuse.
+//
+// Clearing name[0] alone is enough to HIDE a clan - every listing and lookup
+// tests clan[n].name[0] - but it leaves the whole record behind: treasure,
+// ranknames, website, message, bonuses, dungeon progress and relations. The
+// next clan founded in this slot then inherits that debris, because found_clan()
+// resets the slot it picks but not what other clans remember about it.
+static void disband_clan(int cnr) {
+    int serial;
+
+    // The serial has to survive the wipe and keep climbing. get_char_clan()
+    // drops a character out of a clan when its stored clan_serial stops
+    // matching, so a slot reused without bumping it would silently re-admit the
+    // disbanded clan's former members to whatever is founded here next.
+    serial = clan[cnr].status.serial;
+    bzero(clan + cnr, sizeof(struct clan));
+    clan[cnr].status.serial = serial + 1;
+
+    // Also clear every other clan's relation toward this slot, so a future clan
+    // does not start out at war (or allied) on the strength of its predecessor's
+    // treaties. found_clan() does not do this for the slot it reuses.
+    zero_relation(cnr);
+
+    clan_changed = 1;
+}
+
 int found_clan(char *name, int cn, int *pclan) {
     int n, serial;
 
@@ -980,9 +1006,9 @@ static int update_treasure(void) {
         if (clan[cnr].treasure.debt >= 2000) {
             xlog("clan %s is broke, removing", clan[cnr].name);
             add_clanlog(cnr, clan_serial(cnr), 0, 1, "Clan %s went broke and was deleted", get_clan_name(cnr));
-            clan[cnr].name[0] = 0;
-            clan[cnr].status.serial++;
-            clan_changed = 1;
+            // Both log lines above still need the old name and serial, so the
+            // record may only be torn down after them.
+            disband_clan(cnr);
         }
     }
 
