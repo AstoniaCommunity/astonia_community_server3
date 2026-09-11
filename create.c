@@ -1398,7 +1398,7 @@ int init_create(void) {
     ch = xcalloc(sizeof(struct character) * MAXCHARS, IM_BASE);
     if (!ch) return 0;
     xlog("Allocated characters: %.2fM (%d*%d)", sizeof(struct item) * MAXCHARS / 1024.0 / 1024.0, sizeof(struct character), MAXCHARS);
-    mem_usage += sizeof(struct item) * MAXCHARS;
+    mem_usage += sizeof(struct character) * MAXCHARS;
 
     it_temp = xcalloc(sizeof(struct it_temp) * MAXTITEM, IM_BASE);
     if (!it_temp) return 0;
