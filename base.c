@@ -3574,7 +3574,7 @@ void janitor_driver(int cn, int ret, int lastact) {
         if (!ch[cn].citem) {
             int n;
 
-            for (n = INVENTORYSIZE; n >= 30; n--) {
+            for (n = INVENTORYSIZE - 1; n >= 30; n--) {
                 if (ch[cn].item[n]) break;
             }
 
