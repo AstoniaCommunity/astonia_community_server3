@@ -248,7 +248,7 @@ static void read_login(int nr) {
 
     //xlog("find_login(%s,%s)=%d (cn=%d,ID=%d)",name,password,ret,cn,ID);
 
-    remove_input(nr, 20);
+    remove_input(nr, sizeof(ch[0].name) + MAXPASSWORD + 4 + 12);
 
     if (ret == -1) {
         player_client_exit(nr, "Internal error. Please try again. If several retries fail email game@astonia.com.");

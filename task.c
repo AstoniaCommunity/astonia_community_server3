@@ -223,7 +223,7 @@ int set_task(struct task_data *set, int (*proc)(void *, struct character *, int 
             if (mysql_query_con(&mysql, buf)) {
                 elog("Failed to update account ID=%d: Error: %s (%d)", set->uID, mysql_error(&mysql), mysql_errno(&mysql));
             }
-#ifdef CHARINGFO
+#ifdef CHARINFO
             sprintf(buf, "update charinfo set locked='N' where ID=%d", set->uID);
             if (mysql_query_con(&mysql, buf)) {
                 elog("Failed to update charinfo ID=%d: Error: %s (%d)", set->uID, mysql_error(&mysql), mysql_errno(&mysql));
