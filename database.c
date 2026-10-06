@@ -2441,6 +2441,7 @@ static void update_arealist(void) {
         }
         if (mirror < 1 || mirror >= MAXMIRROR) {
             elog("update_arealist: got weird mirror %d, ignoring", mirror);
+            continue;
         }
 
         area[ID][mirror].server = server;
@@ -3248,9 +3249,9 @@ void db_rescue_char(char *IDstring) {
         return;
     }
 
+    mysql_real_escape_string(&mysql, cbuf, (void *)tmp, sizeof(struct character));
     mysql_free_result_cnt(result);
 
-    mysql_real_escape_string(&mysql, cbuf, (void *)tmp, sizeof(struct character));
     sprintf(buf, "update chars set current_area=%d,allowed_area=%d,current_mirror=%d,chr='%s',spacer=44 where ID=%d",
             current_area,
             allowed_area,
@@ -3586,12 +3587,13 @@ void add_iplog(int ID, unsigned int ip) {
     }
 
     if ((row = mysql_fetch_row(result))) { // found suitable entry
-        int use_count;
+        int use_count, logID;
 
+        logID = atoi(row[0]);
         use_count = atoi(row[1]);
         mysql_free_result(result);
 
-        sprintf(buf, "update iplog set use_time=%d,use_count=%d where ID=%s", (int)time(NULL), use_count + 1, row[0]);
+        sprintf(buf, "update iplog set use_time=%d,use_count=%d where ID=%d", (int)time(NULL), use_count + 1, logID);
     } else { // no suitable entry found
         mysql_free_result(result);
 
