@@ -128,7 +128,7 @@ int analyse_text_driver(int cn, int type, char *text, int co) {
                 word[n] = 0;
                 lowerstrcpy(wordlist[w], word);
                 if (strcasecmp(wordlist[w], ch[cn].name)) {
-                    if (w < 20) w++;
+                    if (w < 19) w++; // wordlist has 20 entries, keep the last one as scratch
                 }
             }
             n = 0;
