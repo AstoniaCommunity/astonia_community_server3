@@ -1338,7 +1338,7 @@ static int task_cmp(const void *a, const void *b) {
 static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, int noheal, int noflash, int nofireball, int noball, int noshield, int nowarcry, int nofreeze, int nopulse) {
     //static char *typename[]={"freeze","fireball","ball","flash","warcry","atttack","moveright","moveleft","moveup","movedown","regenerate","distance3","distance7","bless","earthrain","earthmud","heal","ms","pulse","attackback","flee","firering","max"};
     struct task task[maxtasktype];
-    int maxvalue = 0, maxtask = 0, n, ret, cdist, tdist, tmp;
+    int maxtask = 0, n, ret, cdist, tdist, tmp;
     int sillyness = ch[cn].level / 2 + 5, val;
     struct fight_driver_data *dat;
 
@@ -1354,7 +1354,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         tdist < 4 &&
         may_add_spell(co, IDR_FREEZE)) {
         task[maxtask].task = freeze;
-        maxvalue += (task[maxtask].value = fight_driver_freeze_value(cn));
+        task[maxtask].value = fight_driver_freeze_value(cn);
         maxtask++;
     }
 
@@ -1363,7 +1363,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         ch[cn].mana >= POWERSCALE * 2 &&
         ch[cn].hp < ch[cn].value[0][V_HP] * POWERSCALE / 2) {
         task[maxtask].task = heal;
-        maxvalue += (task[maxtask].value = fight_driver_heal_value(cn));
+        task[maxtask].value = fight_driver_heal_value(cn);
         maxtask++;
     }
 
@@ -1372,7 +1372,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         ch[cn].mana >= POWERSCALE * 2 &&
         ch[cn].lifeshield < ch[cn].value[0][V_MAGICSHIELD] * POWERSCALE / 2) {
         task[maxtask].task = ms;
-        maxvalue += (task[maxtask].value = fight_driver_ms_value(cn));
+        task[maxtask].value = fight_driver_ms_value(cn);
         maxtask++;
     }
 
@@ -1381,7 +1381,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         ch[cn].hp >= ch[cn].value[0][V_HP] * POWERSCALE / 2 &&
         (val = fight_driver_earthmud_value(cn, co))) {
         task[maxtask].task = earthmud;
-        maxvalue += (task[maxtask].value = val);
+        task[maxtask].value = val;
         maxtask++;
     }
 
@@ -1390,7 +1390,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         ch[cn].mana >= BLESSCOST &&
         may_add_spell(cn, IDR_BLESS)) {
         task[maxtask].task = bless;
-        maxvalue += (task[maxtask].value = fight_driver_bless_value(cn));
+        task[maxtask].value = fight_driver_bless_value(cn);
         maxtask++;
     }
 
@@ -1400,7 +1400,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         ch[cn].mana >= FIREBALLCOST) {
         if (ishit_fireball(cn, ch[cn].x, ch[cn].y, ch[co].x, ch[co].y, fight_driver_fireball_enemy_check)) {
             task[maxtask].task = fireball;
-            maxvalue += (task[maxtask].value = fight_driver_fireball_value(cn, co));
+            task[maxtask].value = fight_driver_fireball_value(cn, co);
             maxtask++;
         } else if (!nomove) {
             int dirdead[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -1420,25 +1420,25 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
 
                 if (!dirdead[DX_RIGHT] && ishit_fireball(cn, ch[cn].x + n, ch[cn].y, ch[co].x, ch[co].y, fight_driver_fireball_enemy_check)) {
                     task[maxtask].task = moveright;
-                    maxvalue += (task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1);
+                    task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1;
                     maxtask++;
                     break;
                 }
                 if (!dirdead[DX_LEFT] && ishit_fireball(cn, ch[cn].x - n, ch[cn].y, ch[co].x, ch[co].y, fight_driver_fireball_enemy_check)) {
                     task[maxtask].task = moveleft;
-                    maxvalue += (task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1);
+                    task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1;
                     maxtask++;
                     break;
                 }
                 if (!dirdead[DX_DOWN] && ishit_fireball(cn, ch[cn].x, ch[cn].y + n, ch[co].x, ch[co].y, fight_driver_fireball_enemy_check)) {
                     task[maxtask].task = movedown;
-                    maxvalue += (task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1);
+                    task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1;
                     maxtask++;
                     break;
                 }
                 if (!dirdead[DX_UP] && ishit_fireball(cn, ch[cn].x, ch[cn].y - n, ch[co].x, ch[co].y, fight_driver_fireball_enemy_check)) {
                     task[maxtask].task = moveup;
-                    maxvalue += (task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1);
+                    task[maxtask].value = fight_driver_fireball_value(cn, co) / n + 1;
                     maxtask++;
                     break;
                 }
@@ -1454,7 +1454,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         cdist < 30) {
         if (calc_steps_ball(cn, ch[cn].x, ch[cn].y, ch[co].x, ch[co].y) > tdist * 2 - 5) {
             task[maxtask].task = ball;
-            maxvalue += (task[maxtask].value = fight_driver_directball_value(cn, co));
+            task[maxtask].value = fight_driver_directball_value(cn, co);
             maxtask++;
         }
     }
@@ -1466,7 +1466,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         tdist < 4 &&
         may_add_spell(cn, IDR_FLASH)) {
         task[maxtask].task = flash;
-        maxvalue += (task[maxtask].value = fight_driver_flash_value(cn, co));
+        task[maxtask].value = fight_driver_flash_value(cn, co);
         maxtask++;
     }
 
@@ -1477,7 +1477,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         tdist < 2 &&
         may_add_spell(cn, IDR_FIRERING)) {
         task[maxtask].task = firering;
-        maxvalue += (task[maxtask].value = fight_driver_fireball_value(cn, co));
+        task[maxtask].value = fight_driver_fireball_value(cn, co);
         maxtask++;
     }
 
@@ -1487,20 +1487,20 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         cdist < 8 &&
         (may_add_spell(co, IDR_WARCRY) || (!ch[cn].value[1][V_MAGICSHIELD] && ch[cn].lifeshield < ch[cn].value[0][V_WARCRY] * POWERSCALE / 4))) {
         task[maxtask].task = warcry;
-        maxvalue += (task[maxtask].value = fight_driver_warcry_value(cn, co));
+        task[maxtask].value = fight_driver_warcry_value(cn, co);
         maxtask++;
     }
 
     if ((!nomove || cdist == 2)) {
         task[maxtask].task = attack;
-        maxvalue += (task[maxtask].value = fight_driver_attack_value(cn, co));
+        task[maxtask].value = fight_driver_attack_value(cn, co);
         maxtask++;
     }
 
     // we're not full and regenerating
     if (ch[cn].mana < ch[cn].value[0][V_MANA] * POWERSCALE || ch[cn].hp < ch[cn].value[0][V_HP] * POWERSCALE) {
         task[maxtask].task = regenerate;
-        maxvalue += (task[maxtask].value = fight_driver_regen_value(cn, co, dat));
+        task[maxtask].value = fight_driver_regen_value(cn, co, dat);
         maxtask++;
     }
 
@@ -1516,7 +1516,7 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
     }
     if (tmp) {
         task[maxtask].task = distance3;
-        maxvalue += (task[maxtask].value = tmp);
+        task[maxtask].value = tmp;
         maxtask++;
     }
 
@@ -1528,25 +1528,25 @@ static int fight_driver_attack_enemy(int cn, int co, int nomove, int nobless, in
         may_add_spell(cn, IDR_FLASH) &&
         ch[cn].value[1][V_FIREBALL] > ch[cn].value[1][V_FLASH]) {
         task[maxtask].task = distance7;
-        maxvalue += (task[maxtask].value = fight_driver_distance7_value(cn, co));
+        task[maxtask].value = fight_driver_distance7_value(cn, co);
         maxtask++;
     }
 
     if (!nopulse && ch[cn].value[1][V_PULSE] && ch[cn].mana > POWERSCALE && (tmp = fight_driver_pulse_value(cn))) {
         task[maxtask].task = pulse;
-        maxvalue += (task[maxtask].value = tmp);
+        task[maxtask].value = tmp;
         maxtask++;
     }
 
     if (!nomove && (tmp = fight_driver_attackback_value(cn, co))) {
         task[maxtask].task = attackback;
-        maxvalue += (task[maxtask].value = tmp);
+        task[maxtask].value = tmp;
         maxtask++;
     }
 
     if (0 && ch[cn].hp < ch[cn].value[0][V_HP] * POWERSCALE / 2 && (tmp = HIGH_PRIO)) {
         task[maxtask].task = flee;
-        maxvalue += (task[maxtask].value = tmp);
+        task[maxtask].value = tmp;
         maxtask++;
     }
 
@@ -2081,8 +2081,9 @@ int is_room_empty(int xs, int ys, int xe, int ye) {
 
     if (xs < 0 || xs >= MAXMAP || ys < 0 || ys >= MAXMAP || xe < 0 || xe >= MAXMAP || ye < 0 || ye >= MAXMAP) return 0;
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    // step through the 8x8 sectors, aligned to their borders so we don't skip the last one
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (cn = getfirst_char_sector(x, y); cn; cn = ch[cn].sec_next) {
                 if ((ch[cn].flags & CF_PLAYER) && ch[cn].x >= xs && ch[cn].x <= xe && ch[cn].y >= ys && ch[cn].y <= ye) {
                     return 0;

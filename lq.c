@@ -1903,8 +1903,8 @@ void cmd_usurp(int cn, char *ptr) {
     ys = max(0, ch[cn].y - 12);
     ye = min(MAXMAP - 1, ch[cn].y + 12);
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (co = getfirst_char_sector(x, y); co; co = ch[co].sec_next) {
                 if (ch[co].driver == CDR_LQNPC && strcasestr(ch[co].name, name) && (tmp = char_dist(cn, co)) < bdist) {
                     bdist = tmp;
@@ -1946,8 +1946,8 @@ void cmd_follow(int cn, char *ptr) {
     ys = max(0, ch[cn].y - 12);
     ye = min(MAXMAP - 1, ch[cn].y + 12);
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (co = getfirst_char_sector(x, y); co; co = ch[co].sec_next) {
                 if (ch[co].driver == CDR_LQNPC && strcasestr(ch[co].name, name)) {
                     if ((dat = set_data(co, DRD_LQ_NPC_DATA, sizeof(struct lq_npc_data)))) {
@@ -1982,8 +1982,8 @@ void cmd_stop(int cn, char *ptr) {
     ys = max(0, ch[cn].y - 12);
     ye = min(MAXMAP - 1, ch[cn].y + 12);
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (co = getfirst_char_sector(x, y); co; co = ch[co].sec_next) {
                 if (ch[co].driver == CDR_LQNPC && strcasestr(ch[co].name, name)) {
                     if ((dat = set_data(co, DRD_LQ_NPC_DATA, sizeof(struct lq_npc_data)))) {

@@ -79,6 +79,8 @@ void set_sector(int x, int y) {
 int skipx_sector(int x, int y) {
     int n, m, size;
 
+    if (x < 0 || x >= MAXMAP || y < 0 || y >= MAXMAP) return 0;
+
     for (n = 7; n >= 0; n--) {
         m = (x >> n) + (y >> n) * (MAXMAP >> n);
 
