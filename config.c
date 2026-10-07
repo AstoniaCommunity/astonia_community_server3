@@ -83,7 +83,7 @@ void config_string(char *buf) {
 
     for (n = 0; n < MAXVALUE; n++) {
         if (n == MAXVALUE - 1) {
-            fprintf(stderr, "config_set: name exceeds max length(%d).\n", MAXVALUE);
+            fprintf(stderr, "config_set: value exceeds max length(%d).\n", MAXVALUE);
             exit(1);
         }
         c = ptr[n];
@@ -124,10 +124,12 @@ void config_file(char *file) {
 void config_getenv(void) {
     char *tmp;
 
-    if ((tmp = getenv("AS3_DBHOST"))) config_data.dbhost = tmp;
-    if ((tmp = getenv("AS3_DBUSER"))) config_data.dbuser = tmp;
-    if ((tmp = getenv("AS3_DBPASS"))) config_data.dbpass = tmp;
-    if ((tmp = getenv("AS3_DBNAME"))) config_data.dbname = tmp;
-    if ((tmp = getenv("AS3_CHATHOST"))) config_data.chathost = tmp;
-    if ((tmp = getenv("AS3_SVRKEY"))) config_data.svrkey = tmp;
+    // copy the values, the server overwrites its argument (and thus possibly environment) space with status info
+
+    if ((tmp = getenv("AS3_DBHOST"))) config_data.dbhost = strdup(tmp);
+    if ((tmp = getenv("AS3_DBUSER"))) config_data.dbuser = strdup(tmp);
+    if ((tmp = getenv("AS3_DBPASS"))) config_data.dbpass = strdup(tmp);
+    if ((tmp = getenv("AS3_DBNAME"))) config_data.dbname = strdup(tmp);
+    if ((tmp = getenv("AS3_CHATHOST"))) config_data.chathost = strdup(tmp);
+    if ((tmp = getenv("AS3_SVRKEY"))) config_data.svrkey = strdup(tmp);
 }

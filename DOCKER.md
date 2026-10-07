@@ -84,6 +84,7 @@ docker compose up -d
 | `AS3_DBPASS` | `astonia` | Database password |
 | `AS3_DBNAME` | `merc` | Database name |
 | `AS3_CHATHOST` | `localhost` | Chat server hostname |
+| `AS3_SVRKEY` | `4241` | Server key sent to the client in the area info |
 
 ### Ports
 

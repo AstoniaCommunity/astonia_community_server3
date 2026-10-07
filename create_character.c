@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <time.h>
 #include <getopt.h>
 #include <mysql/mysql.h>
@@ -37,6 +39,21 @@ int create_char(int user_ID, char *new_user, char *class) {
     unsigned long long flag = 0;
     int size, expandto, add, mirror;
     char buf[WANTSIZE * 2 + 256], dbuf[WANTSIZE * 2], ddata[WANTSIZE];
+
+    if (strlen(class) < 2) {
+        fprintf(stderr, "Need at least gender and class, e.g. MW.\n");
+        return 1;
+    }
+    for (size = 0; new_user[size]; size++) {
+        if (!isalpha(new_user[size])) {
+            fprintf(stderr, "The name may only contain letters.\n");
+            return 1;
+        }
+    }
+    if (size < 2 || size > 38) {
+        fprintf(stderr, "The name must have between 2 and 38 letters.\n");
+        return 1;
+    }
 
     if (class[2] == 'G') flag |= CF_GOD;
 
@@ -138,7 +155,7 @@ int main(int argc, char **args) {
     int c;
 
     while (1) {
-        c = getopt(argc, args, "s:f:e");
+        c = getopt(argc, args, "hs:f:e");
         if (c == -1) break;
         switch (c) {
         case 'h':
