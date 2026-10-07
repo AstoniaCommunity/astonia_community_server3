@@ -129,8 +129,8 @@ void notify_area(int xc, int yc, int type, int dat1, int dat2, int dat3) {
     ys = max(0, yc - NOTIFY_SIZE);
     ye = min(MAXMAP - 1, yc + NOTIFY_SIZE);
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (cn = getfirst_char_sector(x, y); cn; cn = ch[cn].sec_next) {
                 if (ch[cn].x >= xs && ch[cn].x <= xe && ch[cn].y >= ys && ch[cn].y <= ye) {
                     notify_char(cn, type, dat1, dat2, dat3);
@@ -153,8 +153,8 @@ void notify_area_shout(int xc, int yc, int type, int dat1, int dat2, int dat3) {
     ys = max(0, yc - NOTIFY_SIZE);
     ye = min(MAXMAP - 1, yc + NOTIFY_SIZE);
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (cn = getfirst_char_sector(x, y); cn; cn = ch[cn].sec_next) {
                 if (ch[cn].x >= xs && ch[cn].x <= xe && ch[cn].y >= ys && ch[cn].y <= ye) {
                     if (!sector_hear_shout(xc, yc, ch[cn].x, ch[cn].y)) continue;

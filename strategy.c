@@ -1627,6 +1627,7 @@ void subtask_move(int n) {
         t = ad->ap[t].parent;
         if (t == -1) {
             xlog("NPC is lost: %d at %d,%d", n, ad->an[n].x, ad->an[n].y);
+            return;
         }
         ad->an[n].order = OR_GUARD;
         ad->an[n].or1 = ad->ap[t].x;
@@ -2261,8 +2262,8 @@ void ai_main(int in, unsigned int code) {
         ad->ap[n].threatnlevel = 0;
         if (!ad->ap[n].threat) ad->ap[n].threatlevel = 0;
 
-        for (y = ys; y <= ye; y += 8) {
-            for (x = xs; x <= xe; x += 8) {
+        for (y = ys & ~7; y <= ye; y += 8) {
+            for (x = xs & ~7; x <= xe; x += 8) {
                 for (cn = getfirst_char_sector(x, y); cn; cn = ch[cn].sec_next) {
                     if (ch[cn].driver == CDR_STRATEGY && ch[cn].group != code &&
                         abs(ad->ap[n].x - ch[cn].x) < 10 && abs(ad->ap[n].y - ch[cn].y) < 10) {

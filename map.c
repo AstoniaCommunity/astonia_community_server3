@@ -30,7 +30,7 @@ int set_item_map(int in, int x, int y) {
         return 0;
     }
 
-    if (x < 1 || x >= MAXMAP || y < 1 || y > MAXMAP) {
+    if (x < 1 || x >= MAXMAP || y < 1 || y >= MAXMAP) {
         elog("set_item(): illegal coordinates (%d,%d)", x, y);
         return 0;
     }
@@ -214,7 +214,7 @@ int set_char(int cn, int x, int y, int nosteptrap) {
         return 0;
     }
 
-    if (x < 1 || x >= MAXMAP || y < 1 || y > MAXMAP) {
+    if (x < 1 || x >= MAXMAP || y < 1 || y >= MAXMAP) {
         elog("set_char(): illegal coordinates (%d,%d (%s))", x, y, ch[cn].name);
         return 0;
     }

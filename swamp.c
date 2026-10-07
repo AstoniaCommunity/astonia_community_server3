@@ -323,8 +323,8 @@ int player_close(int xc, int yc, int dist) {
     xt = min(MAXMAP - 1, xc + dist);
     yt = min(MAXMAP - 1, yc + dist);
 
-    for (y = yf; y <= yt; y += 8) {
-        for (x = xf; x <= xt; x += 8) {
+    for (y = yf & ~7; y <= yt; y += 8) {
+        for (x = xf & ~7; x <= xt; x += 8) {
             for (co = getfirst_char_sector(x, y); co; co = ch[co].sec_next) {
                 if (abs(ch[co].x - xc) <= dist && abs(ch[co].y - yc) <= dist && (ch[co].flags & CF_PLAYER)) return 1;
             }

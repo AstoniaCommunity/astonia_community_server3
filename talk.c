@@ -70,8 +70,9 @@ int log_area(int xc, int yc, int type, int dat1, int maxdist, char *format, ...)
     ys = max(0, yc - maxdist);
     ye = min(MAXMAP - 1, yc + maxdist);
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    // step through the 8x8 sectors, aligned to their borders so we don't skip the last one
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (cn = getfirst_char_sector(x, y); cn; cn = ch[cn].sec_next) {
                 if (ch[cn].x >= xs && ch[cn].x <= xe && ch[cn].y >= ys && ch[cn].y <= ye) {
                     if (type == LOG_TALK && !sector_hear(xc, yc, ch[cn].x, ch[cn].y)) continue;
@@ -95,8 +96,9 @@ int sound_area(int xc, int yc, int type) {
     ys = max(0, yc - 16);
     ye = min(MAXMAP - 1, yc + 16);
 
-    for (y = ys; y <= ye; y += 8) {
-        for (x = xs; x <= xe; x += 8) {
+    // step through the 8x8 sectors, aligned to their borders so we don't skip the last one
+    for (y = ys & ~7; y <= ye; y += 8) {
+        for (x = xs & ~7; x <= xe; x += 8) {
             for (cn = getfirst_char_sector(x, y); cn; cn = ch[cn].sec_next) {
                 if (ch[cn].x >= xs && ch[cn].x <= xe && ch[cn].y >= ys && ch[cn].y <= ye) {
                     if (type == LOG_TALK && !sector_hear(xc, yc, ch[cn].x, ch[cn].y)) continue;
