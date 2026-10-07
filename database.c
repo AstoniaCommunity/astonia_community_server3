@@ -1482,7 +1482,9 @@ int find_login(char *name, char *password, int *area_ptr, int *cn_ptr, int *mirr
         return 0;
     }
 
-    if (strcasecmp(login.name, name)) { // not our login? leave and try again later
+    // not our login? leave and try again later. name alone is not enough, somebody else
+    // might be trying the same name with a different password at the same time.
+    if (strcasecmp(login.name, name) || strcmp(login.password, password) || (unsigned int)login.ip != ip) {
         pthread_mutex_unlock(&data_mutex);
         return 0;
     }
@@ -1711,6 +1713,9 @@ void tick_login(void) {
         }
         // the character was online when we read the values from the database, but isn't online anymore
         // that means the database values we read are invalid, and the player needs to try again, hence login_failed
+        xfree(login.chr);
+        xfree(login.itm);
+        xfree(login.ppd);
         login_failed();
         return;
     }
@@ -2202,8 +2207,8 @@ static void load_char(char *name, char *password) {
         mysql_free_result_cnt(result);
         mysql_query_con(&mysql, "unlock tables");
         if (tmp == 1) {
+            add_badpass_ip(&mysql, login.ip); // before login_passwd(), it hands the login slot back
             login_passwd();
-            add_badpass_ip(&mysql, login.ip);
         } else if (tmp == 2) login_locked();
         else if (tmp == 3) login_iplocked();
         else if (tmp == 5) login_notfixed();
@@ -2797,11 +2802,13 @@ void check_task(void) {
 
     if (mysql_query_con(&mysql, buf)) {
         elog("Failed to get content from task: Error: %s (%d)", mysql_error(&mysql), mysql_errno(&mysql));
+        mysql_query_con(&mysql, "unlock tables");
         return;
     }
 
     if (!(result = mysql_store_result_cnt(&mysql))) {
         elog("Failed to store result: Error: %s (%d)", mysql_error(&mysql), mysql_errno(&mysql));
+        mysql_query_con(&mysql, "unlock tables");
         return;
     }
 

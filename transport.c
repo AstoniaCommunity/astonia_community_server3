@@ -143,7 +143,7 @@ void transport_driver(int in, int cn) {
             return;
         }
 
-        bit = 1 << nr;
+        bit = 1ull << nr;
         if (!(dat->seen & bit)) {
             log_char(cn, LOG_SYSTEM, 0, "You have reached a new transportation point.");
             dat->seen |= bit;
@@ -196,7 +196,14 @@ void transport_driver(int in, int cn) {
         y = clan[nr - 64].y;
         a = clan[nr - 64].a;
     } else if (nr < 64) {
-        bit = 1 << nr;
+        // nr comes from the client, check it before using it
+        if (nr < 0 || nr >= ARRAYSIZE(trans)) {
+            //elog("illegal transport nr %d #2",nr);
+            log_char(cn, LOG_SYSTEM, 0, "Nothing happens - BUG (%d,#2).", nr);
+            return;
+        }
+
+        bit = 1ull << nr;
         if (!(dat->seen & bit)) {
             log_char(cn, LOG_SYSTEM, 0, "You've never been to %s before. You cannot go there.", trans[nr].name);
             return;
@@ -204,12 +211,6 @@ void transport_driver(int in, int cn) {
 
         if (nr == 22 && !(ch[cn].flags & CF_ARCH)) {
             log_char(cn, LOG_SYSTEM, 0, "Sorry, Arches only!");
-            return;
-        }
-
-        if (nr < 0 || nr >= ARRAYSIZE(trans)) {
-            //elog("illegal transport nr %d #2",nr);
-            log_char(cn, LOG_SYSTEM, 0, "Nothing happens - BUG (%d,#2).", nr);
             return;
         }
 

@@ -38,7 +38,7 @@ int log_char(int cn, int type, int dat1, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     // make sure the text is legal - we don't want any control characters in it!
     for (n = 0; n < len; n++)
@@ -63,7 +63,7 @@ int log_area(int xc, int yc, int type, int dat1, int maxdist, char *format, ...)
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     xs = max(0, xc - maxdist);
     xe = min(MAXMAP - 1, xc + maxdist);
@@ -142,7 +142,7 @@ int holler(int cn, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     if (strchr(buf, '"')) return 0;
 
@@ -169,7 +169,7 @@ int shout(int cn, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     if (strchr(buf, '"')) return 0;
 
@@ -187,7 +187,7 @@ int say(int cn, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     //if (strchr(buf,'"')) return 0;
 
@@ -206,7 +206,7 @@ int emote(int cn, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     if (strchr(buf, '"')) return 0;
 
@@ -224,7 +224,7 @@ int quiet_say(int cn, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     if (strchr(buf, '"')) return 0;
 
@@ -240,7 +240,7 @@ int whisper(int cn, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     if (strchr(buf, '"')) return 0;
 
@@ -258,7 +258,7 @@ int murmur(int cn, char *format, ...) {
     len = vsnprintf(buf, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     if (strchr(buf, '"')) return 0;
 

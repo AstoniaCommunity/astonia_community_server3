@@ -200,7 +200,7 @@ void decrypt(char *name, char *password) {
         "jkdm\000u7z5g\000j77\000g"};
 
     for (i = 0; i < MAXPASSWORD; i++) {
-        password[i] = password[i] ^ secret[name[1] % 4][i] ^ name[i % 3];
+        password[i] = password[i] ^ secret[(unsigned char)name[1] % 4][i] ^ name[i % 3];
     }
 }
 
@@ -231,7 +231,7 @@ static void read_login(int nr) {
 
     if (MAXITEM - used_items < 512) {
         player_client_exit(nr, "Too many players in this area. Please try again later.");
-        elog("server too full (items: %d / %d)", used_chars, MAXCHARS);
+        elog("server too full (items: %d / %d)", used_items, MAXITEM);
         return;
     }
 
@@ -514,8 +514,8 @@ static void cl_use(int nr, char *buf) {
 static void cl_teleport(int nr, char *buf) {
     int tel, mir;
 
-    tel = buf[0];
-    mir = buf[1];
+    tel = *(unsigned char *)(buf + 0);
+    mir = *(unsigned char *)(buf + 1);
 
     player_driver_teleport(nr, tel + mir * 256);
 }
@@ -791,6 +791,7 @@ static void cl_log(int nr, char *buf) {
 
     cn = player[nr]->cn;
     len = *(unsigned char *)(buf + 0);
+    if (len < 1) return;
 
     buf[len] = 0;
     charlog(cn, "%s", buf + 1);
@@ -928,7 +929,7 @@ void sendquestlog(int cn, int nr) {
     size = sizeof(struct quest) * MAXQUEST;
 
     if (!(quest = set_data(cn, DRD_QUESTLOG_PPD, size))) return;
-    if (!(shrine = set_data(cn, DRD_RANDOMSHRINE_PPD, size))) return;
+    if (!(shrine = set_data(cn, DRD_RANDOMSHRINE_PPD, sizeof(struct shrine_ppd)))) return;
 
     buf[0] = SV_QUESTLOG;
     memcpy(buf + 1, quest, size);
@@ -1091,6 +1092,11 @@ static void read_input(int nr) {
 
     default:
         player[nr]->in_len = 0; // got illegal command. trash all input and bail out
+        return;
+    }
+
+    if (need > sizeof(player[nr]->inbuf)) { // command can never fit into the input buffer, treat as illegal
+        player[nr]->in_len = 0;
         return;
     }
 
@@ -2525,6 +2531,7 @@ static void player_act(int nr) {
     *(unsigned short *)(buf + 1) = player[nr]->action;
 
     switch (player[nr]->action) {
+    default: // actions without a target must not send uninitialized stack data
     case PAC_IDLE:
     case PAC_MAGICSHIELD:
     case PAC_FLASH:
@@ -2589,7 +2596,7 @@ int log_player(int nr, int color, char *format, ...) {
     len = vsnprintf(buf + 3, 1020, format, args);
     va_end(args);
 
-    if (len == 1020) return 0;
+    if (len < 0 || len >= 1020) return 0;
 
     buf[0] = SV_TEXT;
     *(unsigned short *)(buf + 1) = len;
