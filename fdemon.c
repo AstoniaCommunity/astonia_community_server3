@@ -740,7 +740,7 @@ void do_emote(int cn, struct farmy_data *dat) {
         n = bestn;
         //say(cn,"bored: score=%d, co=%d, n=%d",bestscore,bestco,n);
 
-        if (dat->emote.likes[n] < 0) {
+        if (dat->emote.likes[n] < -10) {
             say(cn, "You stink, %s.", ch[co].name);
             if (dat->emote.talked[n] > -2) dat->emote.likes[n]--;
             dat->emote.talked[n]--;

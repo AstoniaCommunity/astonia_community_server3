@@ -210,7 +210,7 @@ int consistency_check_chars(void) {
                     if (n == INVENTORYSIZE) ch[cn].citem = 0;
                     else ch[cn].item[n] = 0;
                     ch[cn].flags |= CF_ITEMS;
-                    if (ch[cn].flags & CF_PLAYER) log_char(cn, LOG_SYSTEM, 0, "\260c3You encountered a bug (consist1). Your item %s has been removed. Please email game@astonia.com. We apologize for the bug.", it[in].name);
+                    if (ch[cn].flags & CF_PLAYER) log_char(cn, LOG_SYSTEM, 0, "\260c3You encountered a bug (consist1). One of your items has been removed. Please email game@astonia.com. We apologize for the bug.");
                     err++;
                     continue;
                 }

@@ -412,15 +412,15 @@ void add_hate(int cn, int co) {
 
     if (!(ppd = set_data(cn, DRD_PK_PPD, sizeof(struct pk_ppd)))) return; // OOPS
 
-    for (n = 0; n < MAXHATE - 1; n++)
+    for (n = 0; n < MAXHATE; n++)
         if (ppd->hate[n] == ch[co].ID) break;
 
-    if (n) memmove(ppd->hate + 1, ppd->hate, sizeof(int) * (n));
+    if (n) memmove(ppd->hate + 1, ppd->hate, sizeof(int) * min(n, MAXHATE - 1));
     ppd->hate[0] = ch[co].ID;
 
     ch[cn].flags &= ~CF_LAG;
 
-    if (n == MAXHATE) {
+    if (n == MAXHATE) { // not on the list before
         log_char(cn, LOG_SYSTEM, 0, "Added %s to hate list", ch[co].name);
 
         reset_name(cn);
@@ -659,7 +659,7 @@ int can_wear(int cn, int in, int pos) {
     inr = ch[cn].item[WN_RHAND];
     if (inr < 0 || inr >= MAXITEM) {
         elog("can_wear(): illegal item %d in WN_RHAND of character %s (%d) found. Removing.", in, ch[cn].name, cn);
-        inl = ch[cn].item[WN_RHAND] = 0;
+        inr = ch[cn].item[WN_RHAND] = 0;
     }
 
     switch (pos) {
@@ -1539,13 +1539,13 @@ int destroy_money_item(int in) {
 }
 
 char *strcasestr(const char *haystack, const char *needle) {
-    const char *ptr;
+    const char *h, *n;
 
-    for (ptr = needle; *haystack; haystack++) {
-        if (toupper(*ptr) == toupper(*haystack)) {
-            ptr++;
-            if (!*ptr) return (char *)(haystack + (needle - ptr + 1));
-        } else ptr = needle;
+    if (!*needle) return (char *)haystack;
+
+    for (; *haystack; haystack++) {
+        for (h = haystack, n = needle; *n && toupper(*h) == toupper(*n); h++, n++);
+        if (!*n) return (char *)haystack;
     }
     return NULL;
 }

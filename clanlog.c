@@ -43,6 +43,10 @@ static char *clanlog_player(int cn, char *ptr, int *pID, int *prepeat) {
     name[len] = 0;
 
     ID = lookup_name(name, NULL);
+    if (ID == -1) {
+        log_char(cn, LOG_SYSTEM, 0, "No player by the name %s.", name);
+        return NULL;
+    }
     if (!ID) {
         if (prepeat) *prepeat = 1;
     } else {

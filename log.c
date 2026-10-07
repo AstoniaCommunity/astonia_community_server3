@@ -102,12 +102,15 @@ void charlog(int cn, char *format, ...) {
     char buf[1024], buf2[2048], *name, pbuf[80];
     int addr, nr;
 
-    if (cn < 1 || cn >= MAXCHARS) name = "ILLEGAL CN";
-    else name = ch[cn].name;
-
     va_start(args, format);
     vsnprintf(buf, 900, format, args);
     va_end(args);
+
+    if (cn < 1 || cn >= MAXCHARS) {
+        xlog("ILLEGAL CN (%d): %s", cn, buf);
+        return;
+    }
+    name = ch[cn].name;
 
     if ((ch[cn].flags & CF_PLAYER) && (nr = ch[cn].player) && (addr = get_player_addr(nr))) sprintf(pbuf, ",IP=%u.%u.%u.%u", (addr >> 0) & 255, (addr >> 8) & 255, (addr >> 16) & 255, (addr >> 24) & 255);
     else pbuf[0] = 0;

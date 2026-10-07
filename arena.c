@@ -306,10 +306,10 @@ void check_inside(int cn, struct master_data *dat) {
 }
 
 int toplist_cmp(const void *a, const void *b) {
+    if (!((struct entry *)(a))->name[0] && !((struct entry *)(b))->name[0]) return 0;
+
     if (!((struct entry *)(a))->name[0]) return 1;
     if (!((struct entry *)(b))->name[0]) return -1;
-
-    if (!((struct entry *)(a))->name[0] && !((struct entry *)(b))->name[0]) return 0;
 
     return ((struct entry *)(b))->score - ((struct entry *)(a))->score;
 }
