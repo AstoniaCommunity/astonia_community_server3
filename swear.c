@@ -101,7 +101,7 @@ int swearing(int cn, char *text) {
                     return 1;
                 }
                 ppd->last_cnt[n]++;
-                ppd->last_time[ppd->last_pos] = realtime;
+                ppd->last_time[n] = realtime;
                 flag = 1;
                 break;
             }

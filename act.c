@@ -317,8 +317,8 @@ static int sub_attack(int cn, int co, int vcn, int vco, int direct) {
     if (!can_attack(cn, co)) return 0; // attack is not allowed
 
     // characters in dark places are at a disadvantage
-    if (!(ch[cn].flags & (CF_INFRARED | CF_INFRARED)) && check_lightm(ch[co].x + ch[co].y * MAXMAP) < 2) vcn -= 8;
-    if (!(ch[co].flags & (CF_INFRARED | CF_INFRARED)) && check_lightm(ch[cn].x + ch[cn].y * MAXMAP) < 2) vco -= 8;
+    if (!(ch[cn].flags & (CF_INFRARED | CF_INFRAVISION)) && check_lightm(ch[co].x + ch[co].y * MAXMAP) < 2) vcn -= 8;
+    if (!(ch[co].flags & (CF_INFRARED | CF_INFRAVISION)) && check_lightm(ch[cn].x + ch[cn].y * MAXMAP) < 2) vco -= 8;
 
     // fighting in swamp
     if (ch[cn].flags & CF_PLAYER) {

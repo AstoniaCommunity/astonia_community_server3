@@ -148,7 +148,7 @@ void lostcon_driver(int cn, int ret, int lastact) {
     if (ch[cn].mana < ch[cn].value[1][V_MANA] * POWERSCALE / 4) {
 
         // use potion
-        if (!ppd->nolife || !ppd->nocombo) {
+        if (!ppd->nomana || !ppd->nocombo) {
             for (n = 30; n < INVENTORYSIZE; n++) {
                 if ((in = ch[cn].item[n]) && it[in].driver == IDR_POTION && it[in].drdata[2]) {
                     if (it[in].drdata[1] && !ppd->nocombo) {

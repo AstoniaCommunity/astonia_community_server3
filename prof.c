@@ -143,7 +143,7 @@ void cmd_steal(int cn) {
     }
     cnt = RANDOM(cnt);
 
-    for (n = cnt = 0; n < INVENTORYSIZE; n++) {
+    for (n = 0; n < INVENTORYSIZE; n++) {
         if (n >= 12 && n < 30) continue;
         if ((in = ch[co].item[n]) && !(it[in].flags & IF_QUEST) && can_carry(cn, in, 1)) {
             if (cnt < 1) break;

@@ -777,11 +777,11 @@ static void cmd_questfix(int cn, char *ptr) {
         return;
     }
 
-    if (!(quest = set_data(cn, DRD_QUESTLOG_PPD, sizeof(struct quest) * MAXQUEST))) return;
+    if (!(quest = set_data(co, DRD_QUESTLOG_PPD, sizeof(struct quest) * MAXQUEST))) return;
 
     quest[MAXQUEST - 1].done = 0;
     questlog_init(co);
-    sendquestlog(cn, ch[cn].player);
+    sendquestlog(co, ch[co].player);
 }
 
 static void cmd_reset(int cn, char *ptr) {
@@ -1246,6 +1246,7 @@ int command(int cn, char *ptr) { // 1=ok, 0=repeat
     if (*ptr != '#' && *ptr != '/') {
         if (ch[cn].flags & CF_SHUTUP) {
             log_char(cn, LOG_SYSTEM, 0, "Sorry, you cannot say anything right now.");
+            return 1;
         }
         if (underwater(cn)) {
             say(cn, "Blub.");
@@ -1415,6 +1416,7 @@ int command(int cn, char *ptr) { // 1=ok, 0=repeat
             return 1;
         }
         in = create_money_item(gold);
+        if (!in) return 1;
         if (ch[cn].flags & CF_PLAYER) dlog(cn, in, "took from #gold %d", gold);
         ch[cn].citem = in;
         it[in].carried = cn;
@@ -1700,7 +1702,7 @@ int command(int cn, char *ptr) { // 1=ok, 0=repeat
 
         nr = atoi(ptr);
 
-        if (nr > 0 && nr < MAXCLAN) {
+        if (nr > 0 && nr < MAXCLUB) {
             kill_club(nr);
         }
 
@@ -2603,7 +2605,7 @@ int command(int cn, char *ptr) { // 1=ok, 0=repeat
         ptr += len;
         while (isspace(*ptr)) ptr++;
 
-        for (n = 0; n < 79; n++) {
+        for (n = 0; n < sizeof(it[0].name) - 1; n++) {
             if (!ptr[n]) break;
             name[n] = ptr[n];
         }

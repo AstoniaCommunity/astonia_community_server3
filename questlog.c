@@ -55,7 +55,7 @@ struct questlog {
     unsigned int flags;
 };
 
-struct questlog questlog[] = {
+struct questlog questlog[MAXQUEST] = {
     {"Lydia's Potion", 1, 2, "James", "Cameron", 15, QLF_REPEATABLE}, //0,
     {"Find the Magic Item", 2, 3, "Gwendylon", "Cameron", 75, QLF_REPEATABLE}, //1,
     {"The Second Skull", 3, 5, "Gwendylon", "Cameron", 150, QLF_REPEATABLE}, //2,
@@ -478,7 +478,7 @@ void questlog_reopen(int cn, int qnr) {
         log_char(cn, LOG_SYSTEM, 0, "You cannot open this quest again.");
         return;
     }
-    if ((!questlog[qnr].flags & QLF_REPEATABLE)) {
+    if (!(questlog[qnr].flags & QLF_REPEATABLE)) {
         log_char(cn, LOG_SYSTEM, 0, "You cannot open this quest again.");
         return;
     }

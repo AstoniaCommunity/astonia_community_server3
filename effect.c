@@ -303,6 +303,7 @@ static int ef_fireball_reflect(int cn, int str, int fn) {
                 if (ch[cn].flags & CF_PLAYER) dlog(cn, in, "dropped because it was used up");
                 remove_item_char(in);
                 destroy_item(in);
+                return 1;
             }
             *(unsigned int *)(it[in].drdata) -= str;
             sprintf(it[in].description, "%d units left.", *(unsigned int *)(it[in].drdata));
@@ -1173,7 +1174,7 @@ static void ef_edemonball_explode(int fn, int x, int y) {
 
                     ch[co].flags |= CF_ITEMS;
 
-                    if (ch[cn].flags & CF_PLAYER) dlog(cn, in, "dropped as shield against edemonball");
+                    if (ch[co].flags & CF_PLAYER) dlog(co, in, "dropped as shield against edemonball");
                     log_char(co, LOG_SYSTEM, 0, "Your %s was destroyed.", it[in].name);
 
                     destroy_item(in);
@@ -1293,6 +1294,7 @@ void create_pulse(int x, int y, int str) {
 
     ef[n].strength = str;
     ef[n].field_cnt = 0;
+    ef[n].light = 0;
     ef[n].stop = ticker + 6;
 
     set_effect_map(n, x, y);

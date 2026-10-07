@@ -1762,7 +1762,7 @@ void update_char(int cn) {
         if (sbase) {
             if (ch[cn].sprite != sbase + off) {
                 if (ch[cn].sprite == 27 || sbase == 27 ||
-                    ch[cn].sprite == 157 || sbase == 257 ||
+                    ch[cn].sprite == 157 || sbase == 157 ||
                     ch[cn].sprite == 39 || sbase == 39) reset_name(cn); // must reset colors if changing to/from demon sprite
                 ch[cn].sprite = sbase + off;
                 set_sector(ch[cn].x, ch[cn].y);

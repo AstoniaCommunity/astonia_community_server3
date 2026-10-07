@@ -268,10 +268,10 @@ void show_clan_relation(int cn, int cnr) {
         }
         if (wrel < 1 || wrel > 5) {
             elog("show_clan_relation(): got illegal want_relation %d in clan %d for clan %d", wrel, cnr, n);
-            crel = 0;
+            wrel = 0;
         }
         if (orel < 1 || orel > 5) {
-            elog("show_clan_relation(): got illegal want_relation %d in clan %d for clan %d", wrel, n, cnr);
+            elog("show_clan_relation(): got illegal want_relation %d in clan %d for clan %d", orel, n, cnr);
             orel = 0;
         }
 
@@ -362,7 +362,7 @@ void zero_relation(int nr) {
     for (n = 1; n < MAXCLAN; n++) {
         clan[n].status.current_relation[nr] = CS_NEUTRAL;
         clan[n].status.want_relation[nr] = CS_NEUTRAL;
-        clan[n].status.want_date[nr] = CS_NEUTRAL;
+        clan[n].status.want_date[nr] = realtime;
     }
 }
 
@@ -1126,14 +1126,15 @@ void clan_dungeon_chat(char *ptr) {
         }
         break;
     case 'J':
-        if (strlen(ptr) < 19) return;
-        // sprintf(buf,"%02d:J:%02d:%03d:%010u:%s",cnr,onr,ch[cn].ID,ch[cn].name);
-        // 00:J:00:0000000000:Name
-        // 03:J:04:0000000001:Ishtar
-        // 012345678901234567890
+        if (strlen(ptr) < 23) return;
+        // sprintf(buf,"%02d:J:%02d:%03d:%010u:%s",cnr,onr,ch[cn].level,ch[cn].ID,ch[cn].name);
+        // 00:J:00:000:0000000000:Name
+        // 03:J:04:012:0000000001:Ishtar
+        // 0123456789012345678901234
         onr = atoi(ptr + 5);
         level = atoi(ptr + 8);
         cID = atoi(ptr + 12);
+        if (onr < 1 || onr >= MAXCLAN) return;
 
         cnt = min(cnt_jewels(cnr) - 11, 3);
         if (cnt_jewels(onr) < 10) { return; }
@@ -1147,8 +1148,8 @@ void clan_dungeon_chat(char *ptr) {
             clan_changed = 1;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-overflow"
-            add_clanlog(cnr, clan_serial(cnr), cID, 5, "Clan was raided by %s of %s (%d) for %d jewels", ptr + 19, get_clan_name(onr), onr, cnt);
-            add_clanlog(onr, clan_serial(onr), cID, 5, "%s raided clan %s (%d) for %d jewels", ptr + 19, get_clan_name(cnr), cnr, cnt);
+            add_clanlog(cnr, clan_serial(cnr), cID, 5, "Clan was raided by %s of %s (%d) for %d jewels", ptr + 23, get_clan_name(onr), onr, cnt);
+            add_clanlog(onr, clan_serial(onr), cID, 5, "%s raided clan %s (%d) for %d jewels", ptr + 23, get_clan_name(cnr), cnr, cnt);
 #pragma GCC diagnostic pop
         }
         break;
@@ -1156,6 +1157,7 @@ void clan_dungeon_chat(char *ptr) {
         if (strlen(ptr) < 8) return;
         nr = atoi(ptr + 5);
         str = atoi(ptr + 7);
+        if (nr < 0 || nr >= 3 || str < 0 || str >= 3) return;
         if (clan[cnr].dungeon.simple_pot[nr][str] > 0) {
             clan[cnr].dungeon.simple_pot[nr][str]--;
             clan_changed = 1;
@@ -1166,6 +1168,7 @@ void clan_dungeon_chat(char *ptr) {
         if (strlen(ptr) < 8) return;
         nr = atoi(ptr + 5);
         str = atoi(ptr + 7);
+        if (nr < 0 || nr >= 2 || str < 0 || str >= 6) return;
         if (clan[cnr].dungeon.alc_pot[nr][str] > 0) {
             clan[cnr].dungeon.alc_pot[nr][str]--;
             clan_changed = 1;
@@ -1231,12 +1234,14 @@ int add_alc_potion(int nr, int in) {
     if (it[in].driver != IDR_FLASK) return -1;
 
     if (it[in].mod_index[0] == V_ATTACK && it[in].mod_index[1] == V_PARRY && it[in].mod_index[2] == V_IMMUNITY) {
+        if (it[in].mod_value[0] < 4) return -1; // too weak to be of any use
         str = min(5, (it[in].mod_value[0] / 4) - 1);
         clan[nr].dungeon.alc_pot[0][str]++;
         clan_changed = 1;
         return 0;
     }
     if (it[in].mod_index[0] == V_FLASH && it[in].mod_index[1] == V_MAGICSHIELD && it[in].mod_index[2] == V_IMMUNITY) {
+        if (it[in].mod_value[0] < 4) return -1; // too weak to be of any use
         str = min(5, (it[in].mod_value[0] / 4) - 1);
         clan[nr].dungeon.alc_pot[1][str]++;
         clan_changed = 1;

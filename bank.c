@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <ctype.h>
 
 #include "server.h"
@@ -154,6 +155,16 @@ int analyse_text_driver(int cn, int type, char *text, int co) {
 
 //-----------------------
 
+// parse an amount of gold and return it in silver. -1 if it is too big to be represented.
+static int bank_amount(char *ptr) {
+    long long val;
+
+    val = atoll(ptr);
+    if (val < 0 || val > INT_MAX / 100) return -1;
+
+    return val * 100;
+}
+
 struct bank_driver_data {
     int last_talk;
     int dir;
@@ -270,9 +281,9 @@ void bank_driver(int cn, int ret, int lastact) {
                 ppd = set_data(co, DRD_BANK_PPD, sizeof(struct bank_ppd));
 
                 if (ppd && (ptr = strcasestr((char *)msg->dat2, "deposit"))) {
-                    val = atoi(ptr + 7) * 100;
+                    val = bank_amount(ptr + 7);
                     if (val) {
-                        if (val > ch[co].gold || val < 0) {
+                        if (val > ch[co].gold || val < 0 || ppd->imperial_gold > INT_MAX - val) {
                             quiet_say(cn, "Thou dost not have that much gold.");
                         } else {
                             ch[co].gold -= val;
@@ -283,9 +294,9 @@ void bank_driver(int cn, int ret, int lastact) {
                         }
                     } else quiet_say(cn, "Thou must name an amount.");
                 } else if (ppd && (ptr = strcasestr((char *)msg->dat2, "withdraw"))) {
-                    val = atoi(ptr + 8) * 100;
+                    val = bank_amount(ptr + 8);
                     if (val) {
-                        if (val > ppd->imperial_gold || val < 0) {
+                        if (val > ppd->imperial_gold || val < 0 || ch[co].gold > INT_MAX - val) {
                             quiet_say(cn, "Thou dost not have that much gold in thine account.");
                         } else {
                             ppd->imperial_gold -= val;
