@@ -141,7 +141,10 @@ static void rec_chat(unsigned short channel, char *text) {
 
         if (channel == 7 || channel == 12 || channel == 13) {
             cnr = atoi(text + 11);
-            step = 14;
+            // club numbers can have more than two digits, so find the end of the header
+            for (step = 11; isdigit(text[step]); step++);
+            if (text[step] == ':') step++;
+            if (channel != 13 && (cnr < 0 || cnr >= MAXCLAN)) return;
         } else if (channel == 8) {
             anr = atoi(text + 11);
             step = 14;
@@ -297,7 +300,16 @@ void tick_chat(void) {
 
         if (ilen > 1) {
             len = *(unsigned short *)(inbuf) + 2;
+            if (len < 5 || len > INBUFSIZE) { // malformed frame, we cannot resync so reconnect
+                elog("chat: got illegal frame length %d", len);
+                ilen = 0;
+                connected = 0;
+                close(sock);
+                state = 0;
+                break;
+            }
             if (ilen >= len) {
+                inbuf[len - 1] = 0; // text must be terminated
                 rec_chat(*(unsigned short *)(inbuf + 2), inbuf + 4);
                 ilen -= len;
                 if (ilen) memmove(inbuf, inbuf + len, ilen);

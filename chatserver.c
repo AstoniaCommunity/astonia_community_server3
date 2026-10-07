@@ -138,7 +138,7 @@ void rec_chat(int nr) {
     while (chat[nr].in_len > 1) {
         len = *(unsigned short *)(chat[nr].inbuf) + 2;
 
-        if (len > 1000) {
+        if (len < 5 || len > 1000) {
             kick_chat(nr);
             return;
         }
