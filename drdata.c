@@ -65,6 +65,7 @@ void *set_data(int cn, int ID, int size) {
 
         if (!dat->data) {
             elog("PANIC: malloc failed in set_data() 2");
+            xfree(dat);
             prof_stop(35, prof);
             return NULL;
         }

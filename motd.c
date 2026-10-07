@@ -67,7 +67,11 @@ void show_motd(int nr) {
             *b = 0;
             b = buf;
             log_player(nr, LOG_SYSTEM, "%s", buf);
-        } else *b++ = *a;
+        } else if (b < buf + sizeof(buf) - 1) *b++ = *a;
+    }
+    if (b != buf) { // last line without newline
+        *b = 0;
+        log_player(nr, LOG_SYSTEM, "%s", buf);
     }
 }
 

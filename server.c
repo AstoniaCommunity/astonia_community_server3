@@ -22,6 +22,7 @@
 #include <getopt.h>
 #include <malloc.h>
 #include <time.h>
+#include <errno.h>
 
 #include "server.h"
 #include "client.h"
@@ -182,8 +183,14 @@ int main(int argc, char *args[]) {
     printf("   ********************************************\n");
     printf("\n");
 
-    // load serverkey from file first so it can be overwritten by config
-    config_file(".serverkey");
+    // load serverkey from file first so it can be overwritten by config.
+    // the file is optional, without it the default key is used.
+    if (access(".serverkey", F_OK) == 0) config_file(".serverkey");
+    else if (errno == ENOENT) printf("No .serverkey file found, using the default server key.\n");
+    else {
+        printf("Could not access '.serverkey': %s\n", strerror(errno));
+        exit(1);
+    }
 
     if (argc > 1) {
         while (1) {
