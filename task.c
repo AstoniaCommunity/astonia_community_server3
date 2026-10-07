@@ -148,19 +148,23 @@ int fire_from_clan(struct fire_from_clan_data *set, struct character *tmp, int *
     return 1;
 }
 
-void punish_player(struct punish_player_data *set, struct character *tmp, int *plock, int *pkick) {
+int punish_player(struct punish_player_data *set, struct character *tmp, int *plock, int *pkick) {
     if (punish(set->master_ID, tmp, set->level, set->reason, plock, pkick)) {
         tell_chat(0, set->master_ID, 1, "Punished %s with a level %d punishment for %s", tmp->name, set->level, set->reason);
         if (set->level) tell_chat(0, set->target_ID, 1, "\260c03You have just been punished for %s. You have lost experience and karma. Your karma is now down to %d. If your karma reaches %d, you will be banned from this game.", set->reason, tmp->karma, (tmp->flags & CF_PAID) ? -12 : -5);
         else tell_chat(0, set->target_ID, 1, "\260c03You have been warned for %s. You will not be warned again. Next time you will lose experience and karma.", set->reason);
+        return 1;
     }
+    return 0;
 }
 
 // unpunish needs a rewrite: it is using the database while the server is locked!!
-void unpunish_player(struct unpunish_player_data *set, struct character *tmp, int *plock, int *pkick) {
+int unpunish_player(struct unpunish_player_data *set, struct character *tmp, int *plock, int *pkick) {
     if (unpunish(set->master_ID, tmp, set->ID, plock, pkick)) {
         tell_chat(0, set->master_ID, 1, "UnPunished %s ID %d.", tmp->name, set->ID);
+        return 1;
     }
+    return 0;
 }
 
 int set_flags(struct set_flags *set, struct character *tmp, int *plock, int *pkick) {

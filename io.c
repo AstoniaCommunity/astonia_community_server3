@@ -69,11 +69,11 @@ static void new_player(int sock) {
     }
 
     player[n] = xcalloc(sizeof(struct player), IM_PLAYER);
-    mem_usage += sizeof(struct player);
     if (player[n] == NULL) {
         close(nsock);
         return;
     }
+    mem_usage += sizeof(struct player);
 
     //bzero(player+n,sizeof(player[0]));
 
@@ -124,6 +124,7 @@ static void send_player(int nr) {
     ret = send(player[nr]->sock, player[nr]->obuf + player[nr]->optr, len, 0);
     prof_stop(11, prof);
     if (ret == -1) { // send failure
+        if (errno == EWOULDBLOCK || errno == EAGAIN || errno == EINTR) return; // try again later
         //xlog("send failure, kicking player %d",nr);
         kick_player(nr, NULL);
         return;
@@ -172,7 +173,8 @@ static void rec_player(int nr) {
     len = recv(player[nr]->sock, (char *)player[nr]->inbuf + player[nr]->in_len, 256 - player[nr]->in_len, 0);
 
     if (len < 1) { // receive failure
-        if (errno != EWOULDBLOCK) {
+        // len==0 means the other side closed the connection, errno is not set in that case
+        if (len == 0 || (errno != EWOULDBLOCK && errno != EAGAIN && errno != EINTR)) {
             //xlog("receive failure, kicking player %d",nr);
             kick_player(nr, NULL);
         }
@@ -316,8 +318,16 @@ int init_io(void) {
 
         if (!bind(sock, (struct sockaddr *)&addr, sizeof(addr))) break;
     }
+    if (port == 5600) {
+        elog("init_io(): no free port in range 5556-5599");
+        close(sock);
+        return 0;
+    }
 
-    if (listen(sock, 50)) return 0;
+    if (listen(sock, 50)) {
+        close(sock);
+        return 0;
+    }
 
     io_sock = sock;
 

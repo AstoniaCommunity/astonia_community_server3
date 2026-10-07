@@ -85,6 +85,7 @@ void player_depot(int cn, int nr, int flag, int fast) {
             if (fast) store_citem(cn);
         }
     } else {
+        if (nr < 0 || nr >= MAXDEPOT) return;
         if (!ppd->itm[nr].flags) return;
         look_item(cn, &ppd->itm[nr], 2000 + nr);
     }
