@@ -156,6 +156,8 @@ int analyse_text_driver(int cn, int type, char *text, int co) {
 //-----------------------
 
 // parse an amount of gold and return it in silver. -1 if it is too big to be represented.
+// gold is stored in silver in an int, so anything above INT_MAX/100 gold would wrap
+// around in the multiplication below (42949673 gold used to come out as 4 silver).
 static int bank_amount(char *ptr) {
     long long val;
 
@@ -283,8 +285,11 @@ void bank_driver(int cn, int ret, int lastact) {
                 if (ppd && (ptr = strcasestr((char *)msg->dat2, "deposit"))) {
                     val = bank_amount(ptr + 7);
                     if (val) {
-                        if (val > ch[co].gold || val < 0 || ppd->imperial_gold > INT_MAX - val) {
+                        if (val > ch[co].gold || val < 0) {
                             quiet_say(cn, "Thou dost not have that much gold.");
+                        } else if (ppd->imperial_gold > INT_MAX - val) {
+                            // overflow check: imperial_gold + val would no longer fit into an int
+                            quiet_say(cn, "Thine account cannot hold that much gold.");
                         } else {
                             ch[co].gold -= val;
                             ppd->imperial_gold += val;
@@ -296,8 +301,11 @@ void bank_driver(int cn, int ret, int lastact) {
                 } else if (ppd && (ptr = strcasestr((char *)msg->dat2, "withdraw"))) {
                     val = bank_amount(ptr + 8);
                     if (val) {
-                        if (val > ppd->imperial_gold || val < 0 || ch[co].gold > INT_MAX - val) {
+                        if (val > ppd->imperial_gold || val < 0) {
                             quiet_say(cn, "Thou dost not have that much gold in thine account.");
+                        } else if (ch[co].gold > INT_MAX - val) {
+                            // overflow check: gold + val would no longer fit into an int
+                            quiet_say(cn, "Thou canst not carry that much gold.");
                         } else {
                             ppd->imperial_gold -= val;
                             ch[co].gold += val;

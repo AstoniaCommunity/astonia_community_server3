@@ -124,7 +124,8 @@ static void send_player(int nr) {
     ret = send(player[nr]->sock, player[nr]->obuf + player[nr]->optr, len, 0);
     prof_stop(11, prof);
     if (ret == -1) { // send failure
-        if (errno == EWOULDBLOCK || errno == EAGAIN || errno == EINTR) return; // try again later
+        // this includes EWOULDBLOCK on purpose: we only get here after select() reported the
+        // socket as writable, and a client that lets its send buffer fill up is most likely gone.
         //xlog("send failure, kicking player %d",nr);
         kick_player(nr, NULL);
         return;
