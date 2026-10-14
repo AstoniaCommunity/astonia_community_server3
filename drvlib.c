@@ -35,10 +35,17 @@
 #include "log.h"
 
 int walk_or_use_driver(int cn, int dir) {
+    int diag;
+
     if (do_walk(cn, dir)) return 1;
 
     //turn(cn,dir);
     //if (char_swap(cn)) return 1;
+
+    // a refused diagonal step must not turn into a use: the pathfinder
+    // may route diagonally past doors and characters, and items can only
+    // be used from the four adjacent tiles (see use_driver)
+    if (!dx2offset(dir, NULL, NULL, &diag) || diag) return 0;
 
     if (do_use(cn, dir, 0)) return 1;
 
@@ -46,10 +53,15 @@ int walk_or_use_driver(int cn, int dir) {
 }
 
 int walk_swap_or_use_driver(int cn, int dir) {
+    int diag;
+
     if (do_walk(cn, dir)) return 1;
 
     turn(cn, dir);
     if (char_swap(cn)) return 1;
+
+    // see walk_or_use_driver
+    if (!dx2offset(dir, NULL, NULL, &diag) || diag) return 0;
 
     if (do_use(cn, dir, 0)) return 1;
 
